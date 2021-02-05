@@ -1,7 +1,25 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Link } from '@reach/router'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import jwt from 'jsonwebtoken';
 
 export default function nav() {
+    const Logout = () => {
+        localStorage.removeItem('auth-token');
+        window.location.assign('/login')
+    }
+
+    const [user, setUserDetails] = useState({})
+
+    useEffect(() => {
+        const token = localStorage.getItem("auth-token");
+        if (token) {
+            const x = jwt.decode(token);
+            return setUserDetails(x);
+        }
+        return localStorage.clear();
+    }, [])
+
     return (
         <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 navbar-expand-lg bg-purple-600 ">
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
@@ -29,8 +47,13 @@ export default function nav() {
                 </li>
                 <li className="nav-item">
                 <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
-                    <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75" /><span className="ml-2">log Out</span>
+                    <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75" /><span className="ml-2">{user?.name}</span>
                 </a>
+                </li>
+                <li className="nav-item">
+                <button className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug bg-red-400 hover:opacity-75 text-white" onClick={() => Logout()}>
+                    Log out
+                </button>
                 </li>
             </ul>
             </div>

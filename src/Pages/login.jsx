@@ -1,6 +1,29 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useState } from "react"
 import React from 'react'
+import requests from '../utils/request'
+import { navigate } from '@reach/router'
 
 export default function login() {
+    
+  const [loginDetails, setLoginDetails] = useState({
+    email:"",
+    password:""
+  })
+
+  const response = async (e) => {
+    e.preventDefault();
+    try {
+      const {data} = await requests.post('/auth/login', {
+        ...loginDetails
+      });
+      localStorage.setItem('auth-token', data.token);
+      debugger
+      navigate('/');
+    } catch (error) {
+     console.log(error) 
+    }
+  }
     return (
         <section className="absolute w-full h-full">
         <div
@@ -25,47 +48,40 @@ export default function login() {
                   <div className="text-gray-500 text-center mb-3 font-bold">
                     <small>Or sign in with credentials</small>
                   </div>
-                  <form>
-                    <div className="relative w-full mb-3">
+                  <form onSubmit={(e) => response(e) }>
+                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        for="grid-password"
+                        htmlFor="grid-password"
                         >Email</label
                       ><input
                         type="email"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                         placeholder="Email"
                         style={{transition: 'all 0.15s ease 0s'}}
+                        onChange={(e) => { setLoginDetails({...loginDetails, email:e.target.value})}}
                       />
                     </div>
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        for="grid-password"
+                        htmlFor="grid-password"
                         >Password</label
                       ><input
                         type="password"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                         placeholder="Password"
                         style={{transition: 'all 0.15s ease 0s'}}
+                        onChange={(e) => { setLoginDetails({...loginDetails, password:e.target.value})}}
                       />
                     </div>
                     <div>
-                      <label className="inline-flex items-center cursor-pointer"
-                        ><input
-                          id="customCheckLogin"
-                          type="checkbox"
-                          className="form-checkbox text-gray-800 ml-1 w-5 h-5"
-                          style={{transition: 'all 0.15s ease 0s'}}
-                        /><span className="ml-2 text-sm font-semibold text-gray-700"
-                          >Remember me</span
-                        ></label
-                      >
+                   
                     </div>
                     <div className="text-center mt-6">
                       <button
                         className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                        type="button"
+                        type="submit"
                         style={{transition: 'all 0.15s ease 0s'}}
                       >
                         Sign In
